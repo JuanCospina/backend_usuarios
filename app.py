@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from flask_cors import CORS
-
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -22,8 +22,6 @@ def agregar_usuario():
     nombre = data.get("nombre")
     correo = data.get("correo")
     password = data.get("password")
-
-    # Escribir los datos en la hoja
     sheet.append_row([nombre, correo, password])
     return jsonify({"mensaje": "Usuario agregado con éxito"}), 200
 
@@ -32,7 +30,6 @@ def agregar_usuario():
 def buscar_usuario():
     data = request.get_json()
     correo_buscado = data.get('correo')
-
     registros = sheet.get_all_records()
 
     for registro in registros:
@@ -41,7 +38,7 @@ def buscar_usuario():
 
     return jsonify({"error": "Usuario no encontrado"}), 404
 
-
 # Iniciar servidor
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
