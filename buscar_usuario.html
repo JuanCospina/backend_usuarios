@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Buscar Usuario</title>
+</head>
+<body>
+  <h1>Buscar Usuario por Correo</h1>
+
+  <form id="buscar-form">
+    <label>Correo:</label><br>
+    <input type="email" id="correo" required><br><br>
+    <button type="submit">Buscar</button>
+  </form>
+
+  <div id="resultado"></div>
+
+  <script>
+    const form = document.getElementById('buscar-form');
+    const resultado = document.getElementById('resultado');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const correo = document.getElementById('correo').value;
+
+      fetch('http://127.0.0.1:5000/buscar_usuario', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.usuario) {
+          resultado.innerHTML = `
+            <h3>Datos del usuario:</h3>
+            <pre>${JSON.stringify(data.usuario, null, 2)}</pre>
+          `;
+        } else {
+          resultado.innerHTML = `<p style="color: red;">${data.error}</p>`;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        resultado.textContent = 'Error al buscar usuario.';
+      });
+    });
+  </script>
+</body>
+</html>
