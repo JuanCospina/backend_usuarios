@@ -3,13 +3,18 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 from flask_cors import CORS
 import os
+import os
+import json
 
 app = Flask(__name__)
 CORS(app)
 
 # Configurar la conexión con Google Sheets
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("credenciales.json", scope)
+credentials_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+info = json.loads(credentials_json)
+creds = ServiceAccountCredentials.from_json_keyfile_dict(info, scope)
+
 client = gspread.authorize(creds)
 
 # Abrir el documento
